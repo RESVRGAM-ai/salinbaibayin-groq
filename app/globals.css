@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: -200% 50%;
+  }
+}
+
+.animate-gradient {
+  animation: gradient 6s linear infinite;
+}
+
+/* Baybayin Custom Fonts */
+@font-face {
+  font-family: 'Baybayin Simple';
+  src: url('/fonts/BaybayinSimpleTRS.woff2') format('woff2'),
+       url('/fonts/BaybayinSimpleTRS.woff') format('woff'); /* Fallback */
+  font-display: swap;
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Tawbid Ukit';
+  src: url('/fonts/TawbidUkitREG.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Baybayin Kariktan';
+  src: url('/fonts/BaybayinKariktanREG.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Baybayin Filipino';
+  src: url('/fonts/BaybayinFilipinoRILL.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Doctrina Christiana';
+  src: url('/fonts/DoctrinaChristianaBold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Baybayin Jose Rizal';
+  src: url('/fonts/BaybayinJoseRizal1886.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+.translation-text {
+  font-size: 11pt !important;
+}
+
+.context-text {
+  font-size: 9pt !important;
+  font-style: italic !important;
+  opacity: 0.8;
+  margin-top: 1rem;
+}
+
