@@ -80,6 +80,7 @@ export default function Home() {
   const [fontSize, setFontSize] = useState(14);
   const [showBaybayinText, setShowBaybayinText] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [animated, setAnimated] = useState<string>('');
 
   const handleTranslate = async (text: string) => {
     try {
