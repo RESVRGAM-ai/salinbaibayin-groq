@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { convertToBaybayin } from '@/utils/baybayinConverter';
+import { useDraggable } from '@/hooks/useDraggable';
 
 // Add this constant for font-canceller compatibility
 const FONT_CANCELLER_SUPPORT = {
@@ -52,7 +53,24 @@ const CANCELLER_LABELS = {
   '_': 'Pangaltas'
 };
 
+const animateText = (
+  text: string,
+  setAnimated: (text: string) => void,
+  speed: number = 50
+) => {
+  let index = 0;
+  const timer = setInterval(() => {
+    if (index < text.length) {
+      setAnimated((prev) => prev + text[index]);
+      index++;
+    } else {
+      clearInterval(timer);
+    }
+  }, speed);
+};
+
 export default function Home() {
+  const { position, dragRef, isDragging, isDesktop } = useDraggable();
   const [inputText, setInputText] = useState('');
   const [mode, setMode] = useState('TAG');
   const [selectedFont, setSelectedFont] = useState('Baybayin Simple');
@@ -62,10 +80,15 @@ export default function Home() {
   const [isTranslating, setIsTranslating] = useState(false);
   const [cleanTagalogText, setCleanTagalogText] = useState('');
   const [fontSize, setFontSize] = useState(14);
+  const [showBaybayinText, setShowBaybayinText] = useState(true);
+  const [animatedText, setAnimatedText] = useState('');
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const handleTranslate = async (text: string) => {
     try {
       setIsTranslating(true);
+      setShowBaybayinText(false);
+      
       let translatedText = '';
 
       const response = await fetch('/api/translate', {
@@ -122,8 +145,17 @@ export default function Home() {
           }
         }
       }
+      
+      if (mode === 'ENG') {
+        setTimeout(() => {
+          setShowBaybayinText(true);
+          setIsAnimating(true);
+          // Animation will reset after 2 seconds
+          setTimeout(() => setIsAnimating(false), 2000);
+        }, 2500);
+      }
     } catch (error) {
-      console.warn('Translation warning:', error);
+      console.error('Translation error:', error);
     } finally {
       setIsTranslating(false);
     }
@@ -200,7 +232,7 @@ export default function Home() {
     >
       {/* 1. Simple animated gradient header row with clear colors */}
       <div className="
-        w-full h-[7px] shrink-0
+        w-full h-[5px] shrink-0
         bg-gradient-to-r 
         from-blue-500 
         via-green-500 
@@ -434,8 +466,11 @@ export default function Home() {
                       <div
                         style={{ 
                           fontFamily: getBaybayinFontFamily(),
-                          fontSize: `${fontSize}pt`
+                          fontSize: `${fontSize}pt`,
+                          opacity: showBaybayinText ? 1 : 0,
+                          transition: 'opacity 0.5s ease-in-out'
                         }}
+                        className={isAnimating ? 'animate-typing' : ''}
                       >
                         {convertToBaybayin(cleanTagalogText, selectedCanceller, selectedFont)}
                       </div>
@@ -496,44 +531,52 @@ export default function Home() {
             )}
 
             {/* Input textbox */}
-            <div className={`
-              /* Width */
-              w-[96%]                    /* Phone */
-              md:w-[70%]                 /* Tablet Portrait */
-              lg:w-[45%]                 /* Tablet Landscape */
-              xl:w-[55%]                 /* Desktop */
-              
-              /* Height */
-              h-[26vh]                   /* Phone */
-              md:h-[20vh]                /* Tablet Portrait */
-              lg:h-[24vh]                /* Tablet Landscape */
-              xl:h-[24vh]                /* Desktop */
-              
-              /* Positioning */
-              absolute
-              
-              /* Mobile positioning - Dynamic based on language mode */
-              ${mode === 'TAG' ? 'bottom-[15%]' : 'bottom-[5%]'}   /* Adjust position based on mode */
-              left-1/2
-              -translate-x-1/2
-              md:translate-x-0           /* Reset transform for tablet/desktop */
-              
-              /* Tablet/Desktop positioning */
-              md:bottom-auto
-              md:top-[20%]              /* Tablet/Desktop: 20% from top */
-              md:right-[5%]             /* Tablet/Desktop: 5% from right */
-              md:left-auto
-              
-              /* Styling */
-              border border-black
-              shadow-[7px_7px_0px_0px_rgba(191,179,140,0.30)]
-              flex flex-col
-              z-10
-              
-              /* Handle keyboard presence on mobile */
-              [@media(max-height:600px)]:bottom-[2%]  /* Move up when keyboard is present */
-              [@media(max-height:600px)]:h-[20vh]     /* Slightly smaller height when keyboard is present */
-            `}>
+            <div
+              ref={dragRef}
+              className={`
+                /* Width */
+                w-[96%]                    /* Phone */
+                md:w-[70%]                 /* Tablet Portrait */
+                lg:w-[45%]                 /* Tablet Landscape */
+                xl:w-[55%]                 /* Desktop */
+                
+                /* Height */
+                h-[26vh]                   /* Phone */
+                md:h-[20vh]                /* Tablet Portrait */
+                lg:h-[24vh]                /* Tablet Landscape */
+                xl:h-[24vh]                /* Desktop */
+                
+                /* Positioning */
+                absolute
+                
+                /* Mobile positioning - Dynamic based on language mode */
+                ${mode === 'TAG' ? 'bottom-[15%]' : 'bottom-[5%]'}   /* Adjust position based on mode */
+                left-1/2
+                -translate-x-1/2
+                md:translate-x-0           /* Reset transform for tablet/desktop */
+                
+                /* Tablet/Desktop positioning */
+                md:bottom-auto
+                md:top-[20%]              /* Tablet/Desktop: 20% from top */
+                md:right-[5%]             /* Tablet/Desktop: 5% from right */
+                md:left-auto
+                
+                /* Styling */
+                border border-black
+                shadow-[7px_7px_0px_0px_rgba(191,179,140,0.30)]
+                flex flex-col
+                z-10
+                
+                /* Handle keyboard presence on mobile */
+                [@media(max-height:600px)]:bottom-[2%]  /* Move up when keyboard is present */
+                [@media(max-height:600px)]:h-[20vh]     /* Slightly smaller height when keyboard is present */
+                ${isDragging ? 'md:cursor-grabbing' : ''}
+                ${isDragging ? '' : 'transition-transform duration-200 ease-out'}
+              `}
+              style={{
+                transform: isDesktop ? `translate(${position.x}px, ${position.y}px)` : undefined
+              }}
+            >
               {/* Terminal top bar */}
               <div className="
                 h-[25px]
@@ -542,6 +585,9 @@ export default function Home() {
                 flex items-center
                 justify-between
                 px-2
+                terminal-top-bar
+                md:cursor-grab
+                select-none
               ">
                 {/* Left side: macOS-like controls */}
                 <div className="flex items-center gap-1.5">
