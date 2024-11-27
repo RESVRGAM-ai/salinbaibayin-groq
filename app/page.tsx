@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { convertToBaybayin } from '@/utils/baybayinConverter';
 import { useDraggable } from '@/hooks/useDraggable';
 
@@ -76,12 +76,9 @@ export default function Home() {
   const [selectedFont, setSelectedFont] = useState('Baybayin Simple');
   const [selectedCanceller, setSelectedCanceller] = useState('+');
   const [tagalogText, setTagalogText] = useState('');
-  const [baybayinText, setBaybayinText] = useState('');
-  const [isTranslating, setIsTranslating] = useState(false);
   const [cleanTagalogText, setCleanTagalogText] = useState('');
   const [fontSize, setFontSize] = useState(14);
   const [showBaybayinText, setShowBaybayinText] = useState(true);
-  const [animatedText, setAnimatedText] = useState('');
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleTranslate = async (text: string) => {
