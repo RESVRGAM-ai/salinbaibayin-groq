@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { convertToBaybayin } from '@/utils/baybayinConverter';
 import { useDraggable } from '@/hooks/useDraggable';
@@ -53,38 +53,33 @@ const CANCELLER_LABELS = {
   '_': 'Pangaltas'
 };
 
-// Update the state declaration:
-const [animated, setAnimated] = useState<string>('');
-
-// Update the animateText function:
-const animateText = (
-  text: string,
-  setAnimated: React.Dispatch<React.SetStateAction<string>>,
-  speed: number = 50
-) => {
-  let index = 0;
-  const timer = setInterval(() => {
-    if (index < text.length) {
-      setAnimated(prev => prev + text[index]);
-      index++;
-    } else {
-      clearInterval(timer);
-    }
-  }, speed);
-};
-
 export default function Home() {
   const { position, dragRef, isDragging, isDesktop } = useDraggable();
-  const [inputText, setInputText] = useState('');
-  const [mode, setMode] = useState('TAG');
-  const [selectedFont, setSelectedFont] = useState('Baybayin Simple');
-  const [selectedCanceller, setSelectedCanceller] = useState('+');
-  const [tagalogText, setTagalogText] = useState('');
-  const [cleanTagalogText, setCleanTagalogText] = useState('');
-  const [fontSize, setFontSize] = useState(14);
-  const [showBaybayinText, setShowBaybayinText] = useState(true);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [animated, setAnimated] = useState<string>('');
+  const [inputText, setInputText] = React.useState('');
+  const [mode, setMode] = React.useState('TAG');
+  const [selectedFont, setSelectedFont] = React.useState('Baybayin Simple');
+  const [selectedCanceller, setSelectedCanceller] = React.useState('+');
+  const [tagalogText, setTagalogText] = React.useState('');
+  const [cleanTagalogText, setCleanTagalogText] = React.useState('');
+  const [fontSize, setFontSize] = React.useState(14);
+  const [showBaybayinText, setShowBaybayinText] = React.useState(true);
+  const [isAnimating, setIsAnimating] = React.useState(false);
+  const [animated, setAnimated] = React.useState<string>('');
+
+  const animateText = (
+    text: string,
+    speed: number = 50
+  ) => {
+    let index = 0;
+    const timer = setInterval(() => {
+      if (index < text.length) {
+        setAnimated(prev => prev + text[index]);
+        index++;
+      } else {
+        clearInterval(timer);
+      }
+    }, speed);
+  };
 
   const handleTranslate = async (text: string) => {
     try {
@@ -213,7 +208,7 @@ export default function Home() {
     // If current canceller isn't supported by new font, switch to first available
     if (!FONT_CANCELLER_SUPPORT[newFont][selectedCanceller]) {
       const firstAvailable = Object.entries(FONT_CANCELLER_SUPPORT[newFont])
-        .find(([_, supported]) => supported)?.[0] || '+'; // Changed from '+' to '+' here
+        .find(([_, supported]) => supported)?.[0] || '+'; 
       setSelectedCanceller(firstAvailable);
     }
   };
