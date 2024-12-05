@@ -2,18 +2,6 @@ import { Groq } from "groq-sdk";
 
 export const runtime = 'edge';
 
-function createParser(onParse: (data: string) => void) {
-  return new TransformStream({
-    transform(chunk, controller) {
-      const text = chunk.choices[0]?.delta?.content || '';
-      if (text) {
-        const data = `data: ${JSON.stringify({ text })}\n\n`;
-        controller.enqueue(new TextEncoder().encode(data));
-      }
-    }
-  });
-}
-
 export async function POST(req: Request) {
   const apiKey = process.env.GROQ_API_KEY;
   
