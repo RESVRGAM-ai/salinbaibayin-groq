@@ -1,7 +1,7 @@
 'use client'
 
+import React, { useState } from 'react';
 import Image from 'next/image';
-import { useState } from 'react';
 import { convertToBaybayin } from '@/utils/baybayinConverter';
 import { useDraggable } from '@/hooks/useDraggable';
 
@@ -53,15 +53,19 @@ const CANCELLER_LABELS = {
   '_': 'Pangaltas'
 };
 
+// Update the state declaration:
+const [animated, setAnimated] = useState<string>('');
+
+// Update the animateText function:
 const animateText = (
   text: string,
-  setAnimated: (text: string) => void,
+  setAnimated: React.Dispatch<React.SetStateAction<string>>,
   speed: number = 50
 ) => {
   let index = 0;
   const timer = setInterval(() => {
     if (index < text.length) {
-      setAnimated((prev) => prev + text[index]);
+      setAnimated(prev => prev + text[index]);
       index++;
     } else {
       clearInterval(timer);
@@ -209,7 +213,7 @@ export default function Home() {
     // If current canceller isn't supported by new font, switch to first available
     if (!FONT_CANCELLER_SUPPORT[newFont][selectedCanceller]) {
       const firstAvailable = Object.entries(FONT_CANCELLER_SUPPORT[newFont])
-        .find(([_, supported]) => supported)?.[0] || '+';
+        .find(([_, supported]) => supported)?.[0] || '+'; // Changed from '+' to '+' here
       setSelectedCanceller(firstAvailable);
     }
   };
@@ -406,10 +410,7 @@ export default function Home() {
                 shadow-[4px_4px_0px_0px_rgba(191,179,140,0.35)]
                 overflow-auto p-[15px] relative
               ">
-                <span className={`
-                  text-gray-400 text-sm select-none
-                  ${convertToBaybayin(inputText, selectedCanceller, selectedFont) ? 'hidden' : ''}
-                `}>
+                <span className={`text-gray-400 text-sm select-none ${convertToBaybayin(inputText, selectedCanceller, selectedFont) ? 'hidden' : ''}`}>
                   Baybayin
                 </span>
 
@@ -503,12 +504,7 @@ export default function Home() {
                   overflow-auto p-[15px] relative
                   opacity-90
                 ">
-                  <span className={`
-                    text-gray-400 text-[11px]
-                    font-['Helvetica_Neue','Helvetica','Arial','sans-serif']
-                    select-none
-                    ${tagalogText ? 'hidden' : ''}
-                  `}>
+                  <span className={`text-gray-400 text-[11px] font-['Helvetica_Neue','Helvetica','Arial','sans-serif'] select-none ${tagalogText ? 'hidden' : ''}`}>
                     Tagalog
                   </span>
                   
@@ -531,46 +527,7 @@ export default function Home() {
             {/* Input textbox */}
             <div
               ref={dragRef}
-              className={`
-                /* Width */
-                w-[96%]                    /* Phone */
-                md:w-[70%]                 /* Tablet Portrait */
-                lg:w-[45%]                 /* Tablet Landscape */
-                xl:w-[55%]                 /* Desktop */
-                
-                /* Height */
-                h-[26vh]                   /* Phone */
-                md:h-[20vh]                /* Tablet Portrait */
-                lg:h-[24vh]                /* Tablet Landscape */
-                xl:h-[24vh]                /* Desktop */
-                
-                /* Positioning */
-                absolute
-                
-                /* Mobile positioning - Dynamic based on language mode */
-                ${mode === 'TAG' ? 'bottom-[15%]' : 'bottom-[5%]'}   /* Adjust position based on mode */
-                left-1/2
-                -translate-x-1/2
-                md:translate-x-0           /* Reset transform for tablet/desktop */
-                
-                /* Tablet/Desktop positioning */
-                md:bottom-auto
-                md:top-[20%]              /* Tablet/Desktop: 20% from top */
-                md:right-[5%]             /* Tablet/Desktop: 5% from right */
-                md:left-auto
-                
-                /* Styling */
-                border border-black
-                shadow-[7px_7px_0px_0px_rgba(191,179,140,0.30)]
-                flex flex-col
-                z-10
-                
-                /* Handle keyboard presence on mobile */
-                [@media(max-height:600px)]:bottom-[2%]  /* Move up when keyboard is present */
-                [@media(max-height:600px)]:h-[20vh]     /* Slightly smaller height when keyboard is present */
-                ${isDragging ? 'md:cursor-grabbing' : ''}
-                ${isDragging ? '' : 'transition-transform duration-200 ease-out'}
-              `}
+              className={`w-[96%] md:w-[70%] lg:w-[45%] xl:w-[55%] h-[26vh] md:h-[20vh] lg:h-[24vh] xl:h-[24vh] absolute ${mode === 'TAG' ? 'bottom-[15%]' : 'bottom-[5%]'} left-1/2 -translate-x-1/2 md:translate-x-0 md:bottom-auto md:top-[20%] md:right-[5%] md:left-auto border border-black shadow-[7px_7px_0px_0px_rgba(191,179,140,0.30)] flex flex-col z-10 ${isDragging ? 'md:cursor-grabbing' : ''} ${isDragging ? '' : 'transition-transform duration-200 ease-out'}`}
               style={{
                 transform: isDesktop ? `translate(${position.x}px, ${position.y}px)` : undefined
               }}
