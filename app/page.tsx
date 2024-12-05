@@ -219,14 +219,14 @@ export default function Home() {
   };
 
   // Add handler for font change to ensure valid canceller
-  const handleFontChange = (newFont: string) => {
-    setSelectedFont(newFont as keyof FontCancellerSupport);
+  const handleFontChange = (newFont: keyof FontCancellerSupport) => {
+    setSelectedFont(newFont);
     
     // If current canceller isn't supported by new font, switch to first available
     if (!FONT_CANCELLER_SUPPORT[newFont][selectedCanceller]) {
-      const firstAvailable = Object.entries(FONT_CANCELLER_SUPPORT[newFont])
-        .find(([_, supported]) => supported)?.[0] || '+'; 
-      setSelectedCanceller(firstAvailable as keyof CancellerSupport);
+      const firstAvailable = (Object.entries(FONT_CANCELLER_SUPPORT[newFont])
+        .find(([_, supported]) => supported)?.[0] || '+') as keyof CancellerSupport;
+      setSelectedCanceller(firstAvailable);
     }
   };
 
@@ -346,10 +346,11 @@ export default function Home() {
               {/* Font selection dropdown (existing) */}
               <select
                 value={selectedFont}
-                onChange={(e) => handleFontChange(e.target.value)}
+                onChange={(e) => handleFontChange(e.target.value as keyof FontCancellerSupport)}
                 className="
                   h-[18px] 
-                  px-1 
+                  w-[120px]
+                  rounded-sm
                   bg-white 
                   border border-black 
                   text-xs
@@ -359,12 +360,11 @@ export default function Home() {
                   [&>option:checked]:bg-[#C9F0F4]
                 "
               >
-                <option value="Baybayin Simple">Baybayin SIMPLE TRS</option>
-                <option value="Tawbid Ukit">Baybayin UKIT 2020</option>
-                <option value="Baybayin Kariktan">Baybayin KARIKTAN 2022</option>
-                <option value="Baybayin Filipino">Baybayin Filipino RILL</option>
-                <option value="Doctrina Christiana">Doctrina Christiana 1593</option>
-                <option value="Baybayin Jose Rizal">Dr Jose Rizal 1886</option>
+                {Object.keys(FONT_CANCELLER_SUPPORT).map((font) => (
+                  <option key={font} value={font}>
+                    {font}
+                  </option>
+                ))}
               </select>
 
               {/* Vowel canceller dropdown - size matched to font dropdown */}
