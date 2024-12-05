@@ -5,13 +5,29 @@ import Image from 'next/image';
 import { convertToBaybayin } from '@/utils/baybayinConverter';
 import { useDraggable } from '@/hooks/useDraggable';
 
+type CancellerSupport = {
+  '+': boolean;
+  'x': boolean;
+  ']': boolean;
+  '_': boolean;
+};
+
+type FontCancellerSupport = {
+  'Baybayin Simple': CancellerSupport;
+  'Tawbid Ukit': CancellerSupport;
+  'Baybayin Kariktan': CancellerSupport;
+  'Baybayin Filipino': CancellerSupport;
+  'Doctrina Christiana': CancellerSupport;
+  'Baybayin Jose Rizal': CancellerSupport;
+};
+
 // Add this constant for font-canceller compatibility
-const FONT_CANCELLER_SUPPORT = {
+const FONT_CANCELLER_SUPPORT: FontCancellerSupport = {
   'Baybayin Simple': {
-    '+': true, // Kurus
-    'x': true, // Ekis
-    ']': true, // Pamudpod
-    '_': true  // Pangaltas
+    '+': true,
+    'x': true,
+    ']': true,
+    '_': true
   },
   'Tawbid Ukit': {
     '+': true,
@@ -46,7 +62,7 @@ const FONT_CANCELLER_SUPPORT = {
 };
 
 // Add this for canceller labels
-const CANCELLER_LABELS = {
+const CANCELLER_LABELS: Record<string, string> = {
   '+': 'Kurus',
   'x': 'Ekis',
   ']': 'Pamudpod',
@@ -57,8 +73,8 @@ export default function Home() {
   const { position, dragRef, isDragging, isDesktop } = useDraggable();
   const [inputText, setInputText] = React.useState('');
   const [mode, setMode] = React.useState('TAG');
-  const [selectedFont, setSelectedFont] = React.useState('Baybayin Simple');
-  const [selectedCanceller, setSelectedCanceller] = React.useState('+');
+  const [selectedFont, setSelectedFont] = React.useState<keyof FontCancellerSupport>('Baybayin Simple');
+  const [selectedCanceller, setSelectedCanceller] = React.useState<keyof CancellerSupport>('+');
   const [tagalogText, setTagalogText] = React.useState('');
   const [cleanTagalogText, setCleanTagalogText] = React.useState('');
   const [fontSize, setFontSize] = React.useState(14);
@@ -204,13 +220,13 @@ export default function Home() {
 
   // Add handler for font change to ensure valid canceller
   const handleFontChange = (newFont: string) => {
-    setSelectedFont(newFont);
+    setSelectedFont(newFont as keyof FontCancellerSupport);
     
     // If current canceller isn't supported by new font, switch to first available
     if (!FONT_CANCELLER_SUPPORT[newFont][selectedCanceller]) {
       const firstAvailable = Object.entries(FONT_CANCELLER_SUPPORT[newFont])
         .find(([_, supported]) => supported)?.[0] || '+'; 
-      setSelectedCanceller(firstAvailable);
+      setSelectedCanceller(firstAvailable as keyof CancellerSupport);
     }
   };
 
@@ -354,7 +370,7 @@ export default function Home() {
               {/* Vowel canceller dropdown - size matched to font dropdown */}
               <select
                 value={selectedCanceller}
-                onChange={(e) => setSelectedCanceller(e.target.value)}
+                onChange={(e) => setSelectedCanceller(e.target.value as keyof CancellerSupport)}
                 className="
                   /* Size and Shape - matched exactly */
                   h-[18px]
@@ -381,7 +397,7 @@ export default function Home() {
                   <option
                     key={value}
                     value={value}
-                    disabled={!FONT_CANCELLER_SUPPORT[selectedFont][value]}
+                    disabled={!FONT_CANCELLER_SUPPORT[selectedFont][value as keyof CancellerSupport]}
                     className="
                       font-['Baybayin Simple']
                       text-center
