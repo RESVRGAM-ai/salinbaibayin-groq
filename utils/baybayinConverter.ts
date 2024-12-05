@@ -157,7 +157,6 @@ const createSpecialDigraphMap = (canceller: string) => ({
     'quo': `ᜃ᜔ᜏᜓ`, // Using kwo form
     // J → Dy combinations
     'jo': `ᜇ${canceller}ᜌᜓ`,
-    'jo': `ᜇ${canceller}ᜌᜓ`,
     'ju': `ᜇ${canceller}ᜌᜓ`,
     'ja': `ᜇ${canceller}ᜌ`,
     'je': `ᜇ${canceller}ᜌᜒ`,
