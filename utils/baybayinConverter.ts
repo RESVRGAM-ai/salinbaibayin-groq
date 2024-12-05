@@ -330,8 +330,8 @@ function getValidCanceller(selectedCanceller: string, fontName: string): string 
   // Default to 'Baybayin Simple' if fontName doesn't exist
   const fontSupport = FONT_CANCELLER_SUPPORT[fontName] || FONT_CANCELLER_SUPPORT['Baybayin Simple'];
   
-  // If the selected canceller is not supported or explicitly set to false, return '+'
-  if (!fontSupport || !fontSupport[selectedCanceller] || fontSupport[selectedCanceller] === false) {
+  // If the selected canceller is not supported, return default
+  if (!fontSupport || !fontSupport[selectedCanceller]) {
     // Special case for Baybayin Kariktan
     if (fontName === 'Baybayin Kariktan') {
       return ']'; // Kariktan uses ']' as its default
@@ -339,7 +339,7 @@ function getValidCanceller(selectedCanceller: string, fontName: string): string 
     
     // For all other fonts, find the first available canceller, defaulting to '+'
     const availableCancellers = Object.entries(fontSupport)
-      .filter(([_, isSupported]) => isSupported === true)
+      .filter(([_, isSupported]) => isSupported)
       .map(([symbol]) => symbol);
     
     return availableCancellers[0] || '+';
@@ -506,4 +506,3 @@ export function convertToBaybayin(
 
 // Export the function
 export default convertToBaybayin;
-
