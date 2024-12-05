@@ -65,6 +65,7 @@ export default function Home() {
   const [showBaybayinText, setShowBaybayinText] = React.useState(true);
   const [isAnimating, setIsAnimating] = React.useState(false);
   const [animated, setAnimated] = React.useState<string>('');
+  const [isTranslating, setIsTranslating] = React.useState(false);
 
   const animateText = (
     text: string,
